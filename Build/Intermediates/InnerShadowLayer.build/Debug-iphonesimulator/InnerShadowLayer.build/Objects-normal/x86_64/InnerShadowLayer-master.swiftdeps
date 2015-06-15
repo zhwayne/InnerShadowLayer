@@ -1,0 +1,7 @@
+version: "Apple Swift version 2.0 (swiftlang-700.0.38.1 clang-700.0.53)"
+options: "b0bbaf991bf811756e63d28bfc169eb3"
+inputs: 
+- "/Users/wayne/Desktop/InnerShadowLayer/InnerShadowLayer/InnerShadowLayer.swift"
+- "/Users/wayne/Desktop/InnerShadowLayer/InnerShadowLayer/UIColor+Ex.swift"
+- "/Users/wayne/Desktop/InnerShadowLayer/InnerShadowLayer/ViewController.swift"
+- "/Users/wayne/Desktop/InnerShadowLayer/InnerShadowLayer/AppDelegate.swift"
