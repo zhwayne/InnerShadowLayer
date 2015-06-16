@@ -30,18 +30,6 @@ class InnerShadowLayer: CALayer {
         }
     }
     
-    override var cornerRadius: CGFloat {
-        didSet {
-            self.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: cornerRadius).CGPath
-        }
-    }
-    
-    override var bounds: CGRect {
-        didSet {
-            self.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: self.cornerRadius).CGPath
-        }
-    }
-    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }

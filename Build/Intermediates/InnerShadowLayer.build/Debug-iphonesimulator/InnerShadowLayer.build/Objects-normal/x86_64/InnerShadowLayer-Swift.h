@@ -109,8 +109,6 @@ SWIFT_CLASS("_TtC16InnerShadowLayer16InnerShadowLayer")
 @property (nonatomic) CGSize innerShadowOffset;
 @property (nonatomic) CGFloat innerShadowRadius;
 @property (nonatomic) float innerShadowOpacity;
-@property (nonatomic) CGFloat cornerRadius;
-@property (nonatomic) CGRect bounds;
 - (nullable instancetype)initWithCoder:(NSCoder * __nonnull)aDecoder OBJC_DESIGNATED_INITIALIZER;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 - (void)drawInContext:(CGContextRef __nonnull)ctx;

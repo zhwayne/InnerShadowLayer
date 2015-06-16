@@ -18,15 +18,11 @@ class ViewController: UIViewController {
         myView.layer.backgroundColor = UIColor.hexColor(0xeeeeee).CGColor
         myView.center                = self.view.center
         myView.layer.cornerRadius    = myView.bounds.size.width / 2
-        
-//        myView.layer.shadowColor = UIColor.blackColor().CGColor
-//        myView.layer.shadowOffset = CGSizeMake(3, 3)
-//        myView.layer.shadowOpacity = 0.25
-//        myView.layer.shadowRadius = 8
+
         
         let shadowLayer          = InnerShadowLayer()
         shadowLayer.frame        = myView.bounds
-        shadowLayer.cornerRadius = myView.layer.cornerRadius
+        shadowLayer.cornerRadius = shadowLayer.bounds.size.width / 2
         shadowLayer.innerShadowOffset  = CGSizeMake(4, 4)
         shadowLayer.innerShadowOpacity = 0.4
         shadowLayer.innerShadowRadius  = 16
