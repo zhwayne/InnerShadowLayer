@@ -37,8 +37,10 @@ class InnerShadowLayer: CALayer {
     override init() {
         super.init()
         
-        self.contentsScale = UIScreen.mainScreen().scale
-        self.masksToBounds = true
+        self.masksToBounds      = true
+        self.shouldRasterize    = true
+        self.contentsScale      = UIScreen.mainScreen().scale
+        self.rasterizationScale = UIScreen.mainScreen().scale
         
         setNeedsDisplay()
     }
@@ -58,12 +60,12 @@ class InnerShadowLayer: CALayer {
         // 创建 color space
         let colorspace = CGColorSpaceCreateDeviceRGB();
         
-        var rect = self.bounds
+        var rect   = self.bounds
         var radius = self.cornerRadius
         
         // 去除边框的大小
         if self.borderWidth != 0 {
-            rect = CGRectInset(rect, self.borderWidth, self.borderWidth);
+            rect   = CGRectInset(rect, self.borderWidth, self.borderWidth);
             radius -= self.borderWidth
             radius = max(radius, 0)
         }
@@ -74,7 +76,7 @@ class InnerShadowLayer: CALayer {
         CGContextClip(ctx)
         
         // 创建阴影填充区域，并镂空中心
-        let shadowPath: CGMutablePathRef = CGPathCreateMutable()
+        let shadowPath = CGPathCreateMutable()
         let shadowRect = CGRectInset(rect, -rect.size.width, -rect.size.width)
         CGPathAddRect(shadowPath, nil, shadowRect)
         CGPathAddPath(shadowPath, nil, someInnerPath);
@@ -83,7 +85,7 @@ class InnerShadowLayer: CALayer {
         // 获取填充颜色信息
         let oldComponents: UnsafePointer<CGFloat> = CGColorGetComponents(self.innerShadowColor)
         var newComponents:[CGFloat] = [0, 0, 0, 0]
-        let numberOfComponents = CGColorGetNumberOfComponents(self.innerShadowColor);
+        let numberOfComponents: Int = CGColorGetNumberOfComponents(self.innerShadowColor);
         switch (numberOfComponents){
         case 2:
             // 灰度
