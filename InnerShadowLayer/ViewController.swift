@@ -15,12 +15,12 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         
         let myView                      = UIView(frame: CGRectMake(0, 0, 280, 280))
-        myView.layer.backgroundColor    = UIColor.hexColor(0xeeeeee).CGColor
-        myView.center                   = self.view.center
+        myView.layer.backgroundColor    = UIColor.hexColor(0xeeeeee).cgColor
+        myView.center                   = view.center
         myView.layer.cornerRadius       = myView.bounds.size.width / 2
         myView.layer.shouldRasterize    = true
-        myView.layer.contentsScale      = UIScreen.mainScreen().scale
-        myView.layer.rasterizationScale = UIScreen.mainScreen().scale
+        myView.layer.contentsScale      = UIScreen.main.scale
+        myView.layer.rasterizationScale = UIScreen.main.scale
 
         
         let shadowLayer          = InnerShadowLayer()

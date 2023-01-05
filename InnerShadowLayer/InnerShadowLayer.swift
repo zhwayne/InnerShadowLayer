@@ -9,12 +9,13 @@
 import UIKit
 
 class InnerShadowLayer: CALayer {
-    var innerShadowColor: CGColor? = UIColor.blackColor().CGColor {
+    
+    var innerShadowColor: CGColor = UIColor.black.cgColor {
         didSet {
             setNeedsDisplay()
         }
     }
-    var innerShadowOffset: CGSize = CGSizeMake(0, 0) {
+    var innerShadowOffset: CGSize = .zero {
         didSet {
             setNeedsDisplay()
         }
@@ -37,78 +38,81 @@ class InnerShadowLayer: CALayer {
     override init() {
         super.init()
         
-        self.masksToBounds      = true
-        self.shouldRasterize    = true
-        self.contentsScale      = UIScreen.mainScreen().scale
-        self.rasterizationScale = UIScreen.mainScreen().scale
-        
+        masksToBounds      = true
+        shouldRasterize    = true
+        contentsScale      = UIScreen.main.scale
+        rasterizationScale = UIScreen.main.scale
+        isOpaque = false
         setNeedsDisplay()
     }
     
-    override func drawInContext(ctx: CGContext) {
-        print("draw")
+    override func draw(in ctx: CGContext) {
         // 设置 Context 属性
         // 允许抗锯齿
-        CGContextSetAllowsAntialiasing(ctx, true);
+        ctx.setAllowsAntialiasing(true);
         // 允许平滑
-        CGContextSetShouldAntialias(ctx, true);
+        ctx.setShouldAntialias(true);
         // 设置插值质量
-        CGContextSetInterpolationQuality(ctx, kCGInterpolationHigh);
+        ctx.interpolationQuality = .high
         
         // 以下为核心代码
         
         // 创建 color space
         let colorspace = CGColorSpaceCreateDeviceRGB();
         
-        var rect   = self.bounds
-        var radius = self.cornerRadius
+        var rect   = bounds
+        var radius = cornerRadius
         
         // 去除边框的大小
         if self.borderWidth != 0 {
-            rect   = CGRectInset(rect, self.borderWidth, self.borderWidth);
+            rect   = CGRectInset(rect, borderWidth, borderWidth);
             radius -= self.borderWidth
             radius = max(radius, 0)
         }
         
         // 创建 inner shadow 的镂空路径
-        let someInnerPath: CGPathRef = UIBezierPath(roundedRect: rect, cornerRadius: radius).CGPath
-        CGContextAddPath(ctx, someInnerPath)
-        CGContextClip(ctx)
+        let someInnerPath: CGPath = UIBezierPath(roundedRect: rect, cornerRadius: radius).reversing().cgPath
+        ctx.addPath(someInnerPath)
+        ctx.clip()
         
         // 创建阴影填充区域，并镂空中心
-        let shadowPath = CGPathCreateMutable()
+        let shadowPath = CGMutablePath()
         let shadowRect = CGRectInset(rect, -rect.size.width, -rect.size.width)
-        CGPathAddRect(shadowPath, nil, shadowRect)
-        CGPathAddPath(shadowPath, nil, someInnerPath);
-        CGPathCloseSubpath(shadowPath)
+        shadowPath.addRect(shadowRect)
+        shadowPath.addPath(someInnerPath)
+        shadowPath.closeSubpath()
         
         // 获取填充颜色信息
-        let oldComponents: UnsafePointer<CGFloat> = CGColorGetComponents(self.innerShadowColor)
-        var newComponents:[CGFloat] = [0, 0, 0, 0]
-        let numberOfComponents: Int = CGColorGetNumberOfComponents(self.innerShadowColor);
-        switch (numberOfComponents){
+        let oldComponents: [CGFloat] = innerShadowColor.components ?? [0, 0, 0, 0]
+        var newComponents: [CGFloat] = [0, 0, 0, 0]
+        let numberOfComponents: Int = oldComponents.count;
+        switch numberOfComponents {
         case 2:
             // 灰度
             newComponents[0] = oldComponents[0]
             newComponents[1] = oldComponents[0]
             newComponents[2] = oldComponents[0]
-            newComponents[3] = oldComponents[1] * CGFloat(self.innerShadowOpacity)
+            newComponents[3] = oldComponents[1] * CGFloat(innerShadowOpacity)
         case 4:
             // RGBA
             newComponents[0] = oldComponents[0]
             newComponents[1] = oldComponents[1]
             newComponents[2] = oldComponents[2]
-            newComponents[3] = oldComponents[3] * CGFloat(self.innerShadowOpacity)
+            newComponents[3] = oldComponents[3] * CGFloat(innerShadowOpacity)
         default: break
         }
         
         // 根据颜色信息创建填充色
-        let innerShadowColorWithMultipliedAlpha = CGColorCreate(colorspace, newComponents)
+        guard let innerShadowColorWithMultipliedAlpha = CGColor(colorSpace: colorspace, components: newComponents) else {
+            return
+        }
         
         // 填充阴影
-        CGContextSetFillColorWithColor(ctx, innerShadowColorWithMultipliedAlpha)
-        CGContextSetShadowWithColor(ctx, self.innerShadowOffset, self.innerShadowRadius, innerShadowColorWithMultipliedAlpha)
-        CGContextAddPath(ctx, shadowPath)
-        CGContextEOFillPath(ctx)
+        ctx.setStrokeColor(UIColor.clear.cgColor)
+        ctx.setFillColor(innerShadowColorWithMultipliedAlpha)
+        ctx.setShadow(offset: innerShadowOffset, blur: innerShadowRadius, color: innerShadowColorWithMultipliedAlpha)
+        ctx.addPath(shadowPath)
+        ctx.addPath(shadowPath)
+        ctx.fillPath()
     }
 }
